@@ -1,8 +1,5 @@
-// testing custom hooks
-// http://localhost:3000/counter-hook
-
 import * as React from 'react'
-import {render, screen, act} from '@testing-library/react'
+import {render, screen, act, renderHook} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import useCounter from '../../components/use-counter'
 
@@ -99,4 +96,22 @@ test('test step', async () => {
   })
   expect(result.current.count).toBe(1);
 })
-/* eslint no-unused-vars:0 */
+
+// With hook library
+test('test step with hook lib, new props', async () => {
+
+  const {result, rerender} = renderHook(useCounter, {initialProps: {initialCount: 3, step: 2}})
+  expect(result.current.count).toBe(3);
+
+  act(() => {result.current.increment()})
+  expect(result.current.count).toBe(5);
+
+  // Now step for component is 5
+  rerender({step: 5})
+
+  act(() => {
+    result.current.decrement();
+    result.current.decrement();
+  })
+  expect(result.current.count).toBe(-5);
+})
